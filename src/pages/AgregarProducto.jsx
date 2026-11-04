@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { useApi } from '../useApi'
 import { useCart } from '../context/CartContext'
+import { puestosPermitidos } from '../puestos'
 
 const initialForm = { nombre: '', descripcion: '', precio: '', categoria_id: '', emprendedor_id: '', en_stock: true }
-const puestosPermitidos = new Set(['Mates El Imperio', 'Cerámicas del Sur'])
 
 const field = 'block w-full rounded-lg border border-stone-300 bg-white p-3'
 const button = 'rounded-lg bg-[#2e5134] px-4 py-2 font-semibold text-white disabled:opacity-50'
@@ -90,7 +90,7 @@ export default function AgregarProducto() {
             <select className={field} {...bind('emprendedor_id')} required>
               <option value="" disabled>Elegí un puesto</option>
               {sellers.data?.items
-                ?.filter(({ activo, nombre_fantasia }) => activo && puestosPermitidos.has(nombre_fantasia))
+                ?.filter(({ activo, id }) => activo && puestosPermitidos.includes(id))
                 .map(({ id, nombre_fantasia }) => <option key={id} value={id}>{nombre_fantasia}</option>)}
             </select>
           </label>

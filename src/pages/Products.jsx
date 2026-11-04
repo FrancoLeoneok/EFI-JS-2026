@@ -1,9 +1,25 @@
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { items } from '../api'
+import { api, items } from '../api'
+import { puestosPermitidos } from '../puestos'
 import { useApi } from '../useApi'
 import { useCart } from '../context/CartContext'
 import Card from '../components/Card'
+
+const pageSize = 50
+
+async function loadCatalog(path, options) {
+  const productsBySeller = await Promise.all(puestosPermitidos.map(async (id) => {
+    const sellerPath = path + '&emprendedor_id=' + id
+    const firstPage = await api(sellerPath, options)
+    const products = [...items(firstPage)]
+    for (let page = 2; page <= firstPage.pages; page += 1) {
+      products.push(...items(await api(sellerPath + '&page=' + page, options)))
+    }
+    return products.filter((product) => product.emprendedor_id === id && product.activo !== false)
+  }))
+  return productsBySeller.flat().sort((a, b) => b.id - a.id)
+}
 
 export default function Products() {
   const [params, setParams] = useSearchParams()
@@ -11,13 +27,16 @@ export default function Products() {
   const { agregarAlCarrito } = useCart()
   const search = params.get('q') ?? ''
   const requestedPage = Number(params.get('page'))
-  const page = Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
-  const query = new URLSearchParams({ page, q: search.trim() })
+  const query = new URLSearchParams({ q: search.trim() })
   if (category) query.set('categoria_id', category)
-  const { data, loading, error } = useApi('/productos/?' + query)
+  const { data, loading, error } = useApi('/productos/?' + query, loadCatalog)
   const { data: categoryData } = useApi('/categorias/?size=100')
 
-  const products = data ? items(data).filter((product) => product.activo !== false) : []
+  const pages = Math.ceil((data?.length ?? 0) / pageSize)
+  const page = Number.isInteger(requestedPage) && requestedPage > 0
+    ? Math.min(requestedPage, Math.max(pages, 1))
+    : 1
+  const products = data?.slice((page - 1) * pageSize, page * pageSize) ?? []
   const categories = categoryData?.items ?? []
   const names = new Map(categories.map(({ id, nombre }) => [id, nombre]))
   const setPage = (next) => setParams({ ...(search ? { q: search } : {}), page: next })
@@ -45,10 +64,10 @@ export default function Products() {
           ))}
         </ul>
       )}
-      {data?.pages > 1 && <nav aria-label="Páginas del catálogo" className="mt-6 flex gap-4">
+      {pages > 1 && <nav aria-label="Páginas del catálogo" className="mt-6 flex gap-4">
         <button type="button" disabled={page <= 1} onClick={() => setPage(page - 1)}>Anterior</button>
-        <span>{page} / {data.pages}</span>
-        <button type="button" disabled={page >= data.pages} onClick={() => setPage(page + 1)}>Siguiente</button>
+        <span>{page} / {pages}</span>
+        <button type="button" disabled={page >= pages} onClick={() => setPage(page + 1)}>Siguiente</button>
       </nav>}
     </section>
   )

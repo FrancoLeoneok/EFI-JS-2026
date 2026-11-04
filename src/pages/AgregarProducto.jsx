@@ -5,6 +5,7 @@ import { useApi } from '../useApi'
 import { useCart } from '../context/CartContext'
 
 const initialForm = { nombre: '', descripcion: '', precio: '', categoria_id: '', emprendedor_id: '', en_stock: true }
+const puestosPermitidos = new Set(['Mates El Imperio', 'Cerámicas del Sur'])
 
 const field = 'block w-full rounded-lg border border-stone-300 bg-white p-3'
 const button = 'rounded-lg bg-[#2e5134] px-4 py-2 font-semibold text-white disabled:opacity-50'
@@ -88,7 +89,9 @@ export default function AgregarProducto() {
           <label className="block">Puesto
             <select className={field} {...bind('emprendedor_id')} required>
               <option value="" disabled>Elegí un puesto</option>
-              {sellers.data?.items?.filter((item) => item.activo).map(({ id, nombre_fantasia }) => <option key={id} value={id}>{nombre_fantasia}</option>)}
+              {sellers.data?.items
+                ?.filter(({ activo, nombre_fantasia }) => activo && puestosPermitidos.has(nombre_fantasia))
+                .map(({ id, nombre_fantasia }) => <option key={id} value={id}>{nombre_fantasia}</option>)}
             </select>
           </label>
           <label className="block"><input type="checkbox" name="en_stock" checked={values.en_stock} onChange={(event) => setValues({ ...values, en_stock: event.target.checked })} /> Disponible</label>

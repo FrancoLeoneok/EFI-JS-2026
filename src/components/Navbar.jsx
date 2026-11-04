@@ -1,8 +1,10 @@
 import {useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useUser } from '../context/UserContext';
 
 export default function Navbar({cartCount = 0}){
   const navigate = useNavigate();
+  const { vistaAdmin, alternarVista } = useUser();
   const[searchTerm, setSearchTerm] = useState("");
   
     const handleSearch = (e) => {
@@ -50,9 +52,9 @@ export default function Navbar({cartCount = 0}){
               </button>              
           </form>
 
-          <nav aria-label="Navegación principal" className="flex w-full items-center gap-3 sm:w-auto sm:gap-4">
+          <nav aria-label="Navegación principal" className="flex w-full flex-wrap items-center gap-x-3 gap-y-1 sm:w-auto sm:gap-x-4">
             <Link to="/products" className="whitespace-nowrap text-sm font-semibold hover:text-[#C85A32]">Catálogo</Link>
-            <Link to="/agregar-producto" className="whitespace-nowrap text-sm font-semibold hover:text-[#C85A32]">Agregar producto</Link>
+            {vistaAdmin && <Link to="/agregar-producto" className="whitespace-nowrap text-sm font-semibold hover:text-[#C85A32]">Agregar producto</Link>}
             <Link to="/about" className="whitespace-nowrap text-sm font-semibold hover:text-[#C85A32]">Acerca de</Link>
             <Link
               to="/cart"
@@ -70,6 +72,15 @@ export default function Navbar({cartCount = 0}){
                 </span>
               )}
             </Link>
+            <button
+              type="button"
+              aria-label="Vista admin"
+              aria-pressed={vistaAdmin}
+              onClick={alternarVista}
+              className="min-h-11 shrink-0 rounded-xl border border-[#2e5134]/25 bg-white px-3 text-sm font-semibold text-[#2e5134] transition-colors hover:bg-[#dfebe0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2e5134] aria-pressed:border-[#2e5134] aria-pressed:bg-[#2e5134] aria-pressed:text-white"
+            >
+              {vistaAdmin ? 'Vista admin' : 'Vista usuario'}
+            </button>
           </nav>
         </div>
       </div>

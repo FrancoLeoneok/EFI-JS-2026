@@ -4,6 +4,11 @@ const UserContext = createContext(null)
 
 export function UserProvider({ children }) {
   const [usuario, setUsuario] = useState(null)
+  const [vistaAdmin, setVistaAdmin] = useState(false)
+
+  function alternarVista() {
+    setVistaAdmin((actual) => !actual)
+  }
 
   function iniciarSesion(usuarioRegistrado) {
     setUsuario(usuarioRegistrado)
@@ -16,7 +21,7 @@ export function UserProvider({ children }) {
   const esVisitante = usuario === null
 
   return (
-    <UserContext.Provider value={{ usuario, esVisitante, iniciarSesion, cerrarSesion }}>
+    <UserContext.Provider value={{ usuario, esVisitante, iniciarSesion, cerrarSesion, vistaAdmin, alternarVista }}>
       {children}
     </UserContext.Provider>
   )

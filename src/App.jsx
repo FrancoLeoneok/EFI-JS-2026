@@ -1,4 +1,4 @@
-import { Link, Route, Routes } from 'react-router-dom'
+import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -9,6 +9,7 @@ import AgregarProducto from './pages/AgregarProducto'
 import ProductsDescription from './components/ProductsDescription'
 import ProductsReviews from './components/ProductsReviews'
 import { useCart } from './context/CartContext'
+import { useUser } from './context/UserContext'
 import Puesto from './pages/Puesto'
 
 function Cart() {
@@ -33,6 +34,7 @@ function Cart() {
 
 export default function App() {
   const { cantidadTotal } = useCart()
+  const { vistaAdmin } = useUser()
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar cartCount={cantidadTotal} />
@@ -47,7 +49,7 @@ export default function App() {
           <Route path="feriantes/:id" element={<Puesto />} />
           <Route path="cart" element={<Cart />} />
           <Route path="about" element={<About />} />
-          <Route path="agregar-producto" element={<AgregarProducto />} />
+          <Route path="agregar-producto" element={vistaAdmin ? <AgregarProducto /> : <Navigate to="/products" replace />} />
           <Route path="*" element={<p className="p-6">Página no encontrada. <Link to="/" className="underline">Volver al inicio</Link></p>} />
         </Routes>
       </main>

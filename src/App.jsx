@@ -42,7 +42,8 @@ export default function App() {
           <Route index element={<Home />} />
           <Route path="products" element={<Products />} />
           <Route path="products/:id" element={<ProductDetail />}>
-            <Route index element={<ProductsDescription />} />
+            <Route index element={<Navigate to="descripcion" replace />} />
+            <Route path="descripcion" element={<ProductsDescription />} />
           </Route>
           <Route path="feriantes/:id" element={<Puesto />} />
           <Route path="cart" element={<Cart />} />

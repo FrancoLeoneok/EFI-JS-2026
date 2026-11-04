@@ -21,7 +21,7 @@ Subí la foto a ImgBB y pegá el enlace directo a la imagen en el campo opcional
 
 - `/`: inicio con puestos destacados.
 - `/products`: catálogo con búsqueda, categorías y paginación.
-- `/products/:id`: detalle. La subruta `opiniones` comparte los datos del producto; actualmente la API no devuelve opiniones.
+- `/products/:id`: detalle y descripción del producto.
 - `/feriantes/:id`: perfil del puesto y sus productos.
 - `/cart`: carrito compartido con Context API durante la navegación.
 - `/agregar-producto`: publica mediante POST y permite eliminar mediante DELETE los productos recién creados en esa pantalla. Usá datos de prueba y eliminalos antes de salir.

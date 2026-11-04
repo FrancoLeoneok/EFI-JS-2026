@@ -1,13 +1,9 @@
-import { Link, NavLink, Outlet, useParams } from 'react-router-dom'
+import { Link, Outlet, useParams } from 'react-router-dom'
 import Card from '../components/Card'
 import { useCart } from '../context/CartContext'
 import { useApi } from '../useApi'
 
 const control = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2e5134]'
-
-function tabClass({ isActive }) {
-  return control + (isActive ? ' bg-[#2e5134] text-white' : ' text-stone-700 hover:bg-white hover:text-[#2e5134]')
-}
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -31,10 +27,7 @@ export default function ProductDetail() {
             </Link>
           </div>
         )}
-        <nav aria-label="Detalle del producto" className="flex w-fit flex-wrap gap-1 rounded-2xl border border-stone-200 bg-stone-100 p-1">
-          <NavLink className={tabClass} to="." end>Descripción</NavLink>
-          <NavLink className={tabClass} to="opiniones">Opiniones</NavLink>
-        </nav>
+        <h2 className="text-lg font-semibold text-stone-900">Descripción</h2>
         <Outlet context={{ product }} />
       </>}
     </section>

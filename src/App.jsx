@@ -7,7 +7,6 @@ import ProductDetail from './pages/ProductDetail'
 import About from './pages/About'
 import AgregarProducto from './pages/AgregarProducto'
 import ProductsDescription from './components/ProductsDescription'
-import ProductsReviews from './components/ProductsReviews'
 import { useCart } from './context/CartContext'
 import { useUser } from './context/UserContext'
 import Puesto from './pages/Puesto'
@@ -44,7 +43,6 @@ export default function App() {
           <Route path="products" element={<Products />} />
           <Route path="products/:id" element={<ProductDetail />}>
             <Route index element={<ProductsDescription />} />
-            <Route path="opiniones" element={<ProductsReviews />} />
           </Route>
           <Route path="feriantes/:id" element={<Puesto />} />
           <Route path="cart" element={<Cart />} />

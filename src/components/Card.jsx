@@ -13,7 +13,7 @@ export default function Card({ producto, categoria, onAgregarAlCarrito }) {
     <article className="flex w-full max-w-xs flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
       <div className="relative aspect-square bg-stone-100">
         {imagen_url ? (
-          <img src={imagen_url} alt={nombre} className="h-full w-full object-cover" />
+          <img src={imagen_url} alt={nombre} onError={(event) => { event.currentTarget.hidden = true }} className="h-full w-full object-cover" />
         ) : (
           <p className="grid h-full place-items-center text-sm text-stone-600">Sin imagen</p>
         )}
@@ -30,8 +30,8 @@ export default function Card({ producto, categoria, onAgregarAlCarrito }) {
       </div>
 
       <div className="flex flex-1 flex-col p-4">
-        {producto.emprendedor?.nombre && (
-          <p className="mb-1 text-xs text-[#2e5134]">{producto.emprendedor.nombre}</p>
+        {producto.emprendedor?.nombre_fantasia && (
+          <p className="mb-1 text-xs text-[#2e5134]">{producto.emprendedor.nombre_fantasia}</p>
         )}
         <h2 className="text-base leading-snug font-semibold text-stone-950">{nombre}</h2>
         {descripcion && (

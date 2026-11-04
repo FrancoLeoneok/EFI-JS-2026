@@ -1,4 +1,10 @@
-export default function Home({ feriantes = [] }) {
+import { Link } from 'react-router-dom'
+import { useApi } from '../useApi'
+
+export default function Home() {
+  const { data, loading, error } = useApi('/emprendedores/')
+  const list = Array.isArray(data) ? data : data?.items
+  const feriantes = Array.isArray(list) ? list : []
   const destacados = feriantes.filter((feriante) => feriante.destacado && feriante.activo !== false)
 
   return (
@@ -29,7 +35,7 @@ export default function Home({ feriantes = [] }) {
       <section id="feriantes-destacados" aria-labelledby="titulo-destacados" className="mx-auto max-w-7xl scroll-mt-6 px-5 py-10 sm:px-8 sm:py-14">
         <p className="mb-2 inline-block rounded-full bg-[#dfebe0] px-3 py-1 text-xs font-semibold text-[#2e5134]">Catálogo de la feria</p>
         <h2 id="titulo-destacados" className="mb-6 text-2xl font-bold tracking-tight sm:text-3xl">Feriantes destacados</h2>
-        {destacados.length > 0 ? (
+        {loading ? <p role="status">Cargando feriantes…</p> : error ? <p role="status">{error}</p> : destacados.length > 0 ? (
           <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {destacados.map((feriante) => (
               <li key={feriante.id}>
@@ -38,7 +44,7 @@ export default function Home({ feriantes = [] }) {
                     {feriante.logo_url && (
                       <img src={feriante.logo_url} alt="" loading="lazy" className="size-16 shrink-0 rounded-xl object-cover" />
                     )}
-                    <h3 className="text-lg font-semibold">{feriante.nombre_fantasia}</h3>
+                    <h3 className="text-lg font-semibold"><Link to={'/feriantes/' + feriante.id} className="underline">{feriante.nombre_fantasia}</Link></h3>
                   </div>
                   {feriante.descripcion_bio && <p className="mt-3 text-sm leading-relaxed text-stone-600">{feriante.descripcion_bio}</p>}
                 </article>

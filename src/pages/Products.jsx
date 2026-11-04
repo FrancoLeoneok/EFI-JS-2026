@@ -1,110 +1,55 @@
-import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
+import { items } from '../api'
+import { useApi } from '../useApi'
+import { useCart } from '../context/CartContext'
+import Card from '../components/Card'
 
 export default function Products() {
-    const [products, setProducts] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [search, setSearch] = useState("")
-    const [category, setCategory] = useState("Todas")
+  const [params, setParams] = useSearchParams()
+  const [category, setCategory] = useState('')
+  const { agregarAlCarrito } = useCart()
+  const search = params.get('q') ?? ''
+  const requestedPage = Number(params.get('page'))
+  const page = Number.isInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1
+  const query = new URLSearchParams({ page, q: search.trim() })
+  if (category) query.set('categoria_id', category)
+  const { data, loading, error } = useApi('/productos/?' + query)
+  const { data: categoryData } = useApi('/categorias/?size=100')
 
-    const API_URL = import.meta.env.VITE_API_URL
+  const products = data ? items(data).filter((product) => product.activo !== false) : []
+  const categories = categoryData?.items ?? []
+  const names = new Map(categories.map(({ id, nombre }) => [id, nombre]))
+  const setPage = (next) => setParams({ ...(search ? { q: search } : {}), page: next })
 
-    useEffect(() => {
-        fetch(`${API_URL}/articulos/`)
-            .then(res => res.json())
-            .then((data) => {
-                setProducts(data.items)
-                setLoading(false)
-            })
-    }, [])
-
-    if (loading) return <h1 className="text-6xl font-bold">Cargando...</h1>
-
-    // Obtener categorías
-    const categories = [
-        "Todas",
-        ...new Set(products.map(product => product.categoria))
-    ]
-
-    // Buscador y filtro
-    const filteredProducts = products.filter(product => {
-        const matchesSearch = product.nombre
-            .toLowerCase()
-            .includes(search.toLowerCase())
-
-        const matchesCategory =
-            category === "Todas" || product.categoria === category
-
-        return matchesSearch && matchesCategory
-    })
-
-    return (
-        <div className="max-w-7xl mx-auto px-4 pt-6">
-
-            <h1 className="text-3xl font-bold mb-6">
-                Productos
-            </h1>
-
-            {/* Buscador y filtro */}
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-
-                <input
-                    type="text"
-                    placeholder="Buscar producto..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="p-3 rounded border border-gray-300 text-black flex-1"
-                />
-
-                <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="p-3 rounded border border-gray-300 text-black"
-                >
-                    {categories.map(cat => (
-                        <option key={cat} value={cat}>
-                            {cat}
-                        </option>
-                    ))}
-                </select>
-
-            </div>
-
-            {/* Grilla responsiva */}
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-
-                {filteredProducts.length > 0 ? (
-                    filteredProducts.map((product) => (
-                        <div
-                            key={product.id}
-                            className="p-4 bg-zinc-800 rounded"
-                        >
-                            <div className="flex justify-between gap-4">
-                                <h2>{product.nombre}</h2>
-
-                                <p className="mb-2">
-                                    ${product.precio}
-                                </p>
-                            </div>
-
-                            <p className="mb-6">
-                                Stock: {product.stock}
-                            </p>
-
-                            <Link
-                                to={`/products/${product.id}`}
-                                className="mt-4 px-3 py-2 flex justify-center rounded bg-blue-600 hover:bg-blue-500"
-                            >
-                                Ver producto
-                            </Link>
-                        </div>
-                    ))
-                ) : (
-                    <p>No se encontraron productos.</p>
-                )}
-
-            </div>
-        </div>
-    )
+  return (
+    <section className="mx-auto max-w-7xl p-6">
+      <h1 className="mb-6 text-3xl font-bold">Catálogo</h1>
+      <div className="mb-6 flex flex-wrap gap-4">
+        <input aria-label="Buscar producto" placeholder="Buscar producto…" value={search}
+          onChange={(event) => setParams(event.target.value ? { q: event.target.value } : {}, { replace: true })}
+          className="rounded border p-3" />
+        <select aria-label="Categoría" value={category} onChange={(event) => { setCategory(event.target.value); setPage(1) }} className="rounded border p-3">
+          <option value="">Todas las categorías</option>
+          {categories.map(({ id, nombre }) => <option key={id} value={id}>{nombre}</option>)}
+        </select>
+      </div>
+      {loading ? <p role="status">Cargando catálogo…</p> : error ? <p role="alert">{error}</p> : products.length === 0 ? <p>No se encontraron productos.</p> : (
+        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {products.map((product) => (
+            <li key={product.id} className="space-y-2">
+              <Card producto={{ ...product, en_stock: product.en_stock ?? Number(product.stock) > 0 }}
+                categoria={names.get(product.categoria_id)} onAgregarAlCarrito={agregarAlCarrito} />
+              <Link className="underline" to={'/products/' + product.id}>Ver detalle de {product.nombre}</Link>
+            </li>
+          ))}
+        </ul>
+      )}
+      {data?.pages > 1 && <nav aria-label="Páginas del catálogo" className="mt-6 flex gap-4">
+        <button type="button" disabled={page <= 1} onClick={() => setPage(page - 1)}>Anterior</button>
+        <span>{page} / {data.pages}</span>
+        <button type="button" disabled={page >= data.pages} onClick={() => setPage(page + 1)}>Siguiente</button>
+      </nav>}
+    </section>
+  )
 }
-

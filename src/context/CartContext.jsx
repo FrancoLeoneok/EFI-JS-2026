@@ -19,10 +19,14 @@ export function CartProvider({ children }) {
     })
   }
 
+  function quitarDelCarrito(id) {
+    setProductos((actuales) => actuales.filter((item) => item.producto.id !== id))
+  }
+
   const cantidadTotal = productos.reduce((total, item) => total + item.cantidad, 0)
 
   return (
-    <CartContext.Provider value={{ productos, agregarAlCarrito, cantidadTotal }}>
+    <CartContext.Provider value={{ productos, agregarAlCarrito, quitarDelCarrito, cantidadTotal }}>
       {children}
     </CartContext.Provider>
   )

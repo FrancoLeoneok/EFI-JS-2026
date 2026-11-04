@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+
 export default function Footer() {
   return (
     <footer className="bg-[#FAF8F5] text-store-700 pt-16 pb-12 border-t border-store-2000/80 font-sans">
@@ -48,23 +50,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/acerca" className="text-stone-600 hover:text-[#C85A32] transition">
+                <Link to="/products" className="text-stone-600 hover:text-[#C85A32] transition">
                   Catálogo
-                </Link>
-              </li>
-              <li>
-                <Link to="/contacto" className="text-stone-600 hover:text-[#C85A32] transition">
-                  Paseos de Ferias
-                </Link>
-              </li>
-              <li>
-                <Link to="/contacto" className="text-stone-600 hover:text-[#C85A32] transition">
-                  Postular mi Puesto
-                </Link>
-              </li>
-              <li>
-                <Link to="/contacto" className="text-stone-600 hover:text-[#C85A32] transition">
-                  Políticas de Privacidad
                 </Link>
               </li>
             </ul>

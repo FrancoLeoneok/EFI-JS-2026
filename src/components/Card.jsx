@@ -1,4 +1,8 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { api } from '../api'
+import { useCart } from '../context/CartContext'
+import { useUser } from '../context/UserContext'
 
 const formatoPrecio = new Intl.NumberFormat('es-AR', {
   style: 'currency',
@@ -10,6 +14,30 @@ const formatoPrecio = new Intl.NumberFormat('es-AR', {
 
 export default function Card({ producto, categoria, onAgregarAlCarrito, mostrarDetalle = false }) {
   const { nombre, precio, imagen_url, descripcion, destacado, en_stock = true } = producto
+  const { vistaAdmin } = useUser()
+  const { quitarDelCarrito } = useCart()
+  const navigate = useNavigate()
+  const [eliminando, setEliminando] = useState(false)
+  const [eliminado, setEliminado] = useState(false)
+  const [error, setError] = useState('')
+
+  async function eliminarProducto() {
+    if (!vistaAdmin || eliminando || !window.confirm('¿Eliminar del catálogo «' + nombre + '»?')) return
+    setEliminando(true)
+    setError('')
+    try {
+      await api('/productos/' + producto.id, { method: 'DELETE' })
+      quitarDelCarrito(producto.id)
+      setEliminado(true)
+      if (!mostrarDetalle) navigate('/products', { replace: true })
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setEliminando(false)
+    }
+  }
+
+  if (eliminado) return null
 
   return (
     <article className="flex w-full max-w-xs flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
@@ -66,6 +94,25 @@ export default function Card({ producto, categoria, onAgregarAlCarrito, mostrarD
               Ver detalle <span aria-hidden="true">→</span>
             </Link>
           )}
+          {vistaAdmin && (
+            <div className="mt-3 flex flex-wrap gap-2 border-t border-stone-100 pt-3">
+              <Link to={'/products/' + producto.id + '/editar'} aria-label={'Editar ' + nombre}
+                className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-stone-300 px-3 text-sm font-semibold text-stone-700 hover:bg-stone-100">
+                <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+                  <path d="m14 5 5 5M4 20l5-1L21 7l-5-5L4 14z" />
+                </svg>
+                Editar
+              </Link>
+              <button type="button" disabled={eliminando} onClick={eliminarProducto} aria-label={'Eliminar ' + nombre}
+                className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-red-200 px-3 text-sm font-semibold text-red-800 enabled:hover:bg-red-50 disabled:opacity-50">
+                <svg aria-hidden="true" className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7" />
+                </svg>
+                {eliminando ? 'Eliminando…' : 'Eliminar'}
+              </button>
+            </div>
+          )}
+          {error && <p role="alert" className="mt-2 text-sm text-red-800">{error}</p>}
         </div>
       </div>
     </article>

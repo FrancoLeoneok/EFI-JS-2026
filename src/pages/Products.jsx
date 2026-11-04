@@ -64,7 +64,7 @@ export default function Products() {
       {loading ? <p role="status">Cargando catálogo…</p> : error ? <p role="alert">{error}</p> : products.length === 0 ? <p>No se encontraron productos.</p> : (
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {products.map((product) => (
-            <li key={product.id} className="flex">
+            <li key={product.id} className="flex empty:hidden">
               <Card producto={{ ...product, en_stock: product.en_stock ?? Number(product.stock) > 0 }}
                 categoria={names.get(product.categoria_id)} onAgregarAlCarrito={agregarAlCarrito} mostrarDetalle />
             </li>
@@ -79,3 +79,4 @@ export default function Products() {
     </section>
   )
 }
+

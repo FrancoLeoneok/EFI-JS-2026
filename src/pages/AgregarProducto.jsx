@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api } from '../api'
 import { useApi } from '../useApi'
 import { useCart } from '../context/CartContext'
@@ -10,22 +10,41 @@ const initialForm = { nombre: '', descripcion: '', imagen_url: '', precio: '', c
 const field = 'block w-full rounded-lg border border-stone-300 bg-white p-3'
 const button = 'rounded-lg bg-[#2e5134] px-4 py-2 font-semibold text-white disabled:opacity-50'
 
-export default function AgregarProducto() {
+export function EditarProducto() {
+  const { id } = useParams()
+  const { data, loading, error } = useApi('/productos/' + encodeURIComponent(id))
+  if (loading) return <p className="p-6" role="status">Cargando producto…</p>
+  if (error || !data) return <p className="p-6" role="alert">{error || 'Producto no encontrado.'}</p>
+  return <AgregarProducto key={data.id} producto={data} />
+}
+
+export default function AgregarProducto({ producto }) {
+  const navigate = useNavigate()
   const categories = useApi('/categorias/?size=100')
   const sellers = useApi('/emprendedores/?size=100')
   const { quitarDelCarrito } = useCart()
-  const [values, setValues] = useState(initialForm)
+  const [values, setValues] = useState(() => producto ? {
+    nombre: producto.nombre,
+    descripcion: producto.descripcion ?? '',
+    imagen_url: producto.imagen_url ?? '',
+    precio: String(producto.precio),
+    categoria_id: String(producto.categoria_id),
+    emprendedor_id: String(producto.emprendedor_id),
+    en_stock: producto.en_stock ?? true,
+  } : initialForm)
   const bind = (name) => ({ name, value: values[name], onChange: (event) => setValues({ ...values, [name]: event.target.value }) })
   const [created, setCreated] = useState([])
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState(null)
   const [failedPhoto, setFailedPhoto] = useState('')
   const imagen_url = values.imagen_url.trim()
+  const fotoSinCambios = Boolean(producto) && imagen_url === (producto.imagen_url ?? '')
   const validPhotoUrl = !imagen_url || (imagen_url.length <= 255 && /^https:\/\//i.test(imagen_url) && URL.canParse(imagen_url))
+  const fotoInvalida = !fotoSinCambios && (!validPhotoUrl || Boolean(imagen_url && failedPhoto === imagen_url))
 
   async function handleSubmit(event) {
     event.preventDefault()
-    if (busy || !validPhotoUrl || (imagen_url && failedPhoto === imagen_url)) return
+    if (busy || fotoInvalida) return
     const nombre = values.nombre.trim()
     const precio = Number(values.precio)
     const categoria_id = Number(values.categoria_id)
@@ -35,18 +54,23 @@ export default function AgregarProducto() {
       setNotice({ error: 'Completá el nombre, precio, categoría y puesto con valores válidos.' })
       return
     }
+    if (producto && !window.confirm('¿Guardar los cambios del producto?')) return
     setBusy(true)
     setNotice(null)
     try {
-      const product = await api('/productos/', {
-        method: 'POST',
+      const product = await api(producto ? '/productos/' + producto.id : '/productos/', {
+        method: producto ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, precio, categoria_id, emprendedor_id, descripcion: values.descripcion.trim() || null, en_stock: values.en_stock, imagen_url: imagen_url || null }),
+        body: JSON.stringify({ nombre, precio, categoria_id, emprendedor_id, descripcion: values.descripcion.trim() || null, en_stock: values.en_stock, imagen_url: fotoSinCambios ? undefined : imagen_url || null }),
       })
-      setCreated((current) => [...current, product])
-      setNotice({ message: 'Producto publicado.' })
-      setValues(initialForm)
-      setFailedPhoto('')
+      if (producto) {
+        navigate('/products/' + producto.id, { replace: true })
+      } else {
+        setCreated((current) => [...current, product])
+        setNotice({ message: 'Producto publicado.' })
+        setValues(initialForm)
+        setFailedPhoto('')
+      }
     } catch (error) {
       setNotice({ error: error.message })
     } finally {
@@ -75,8 +99,9 @@ export default function AgregarProducto() {
 
   return (
     <section className="mx-auto max-w-xl space-y-5 p-6">
-      <h1 className="text-3xl font-bold">Agregar producto</h1>
-      <p>Elegí una categoría y un puesto para publicar en el catálogo.</p>
+      <h1 className="text-3xl font-bold">{producto ? 'Editar producto' : 'Agregar producto'}</h1>
+      {producto ? <Link className="underline" to={'/products/' + producto.id}>Volver al detalle</Link>
+        : <p>Elegí una categoría y un puesto para publicar en el catálogo.</p>}
       {loading && <p role="status">Cargando categorías y puestos…</p>}
       {error && <p role="alert">{error}</p>}
       {!loading && !error && (
@@ -112,8 +137,8 @@ export default function AgregarProducto() {
                 onError={() => setFailedPhoto(imagen_url)} className="aspect-square w-40 rounded-lg bg-stone-100 object-contain" />
             ))}
           </div>
-          <button type="submit" className={button} disabled={busy || !validPhotoUrl || Boolean(imagen_url && failedPhoto === imagen_url)}>
-            {busy ? 'Procesando…' : 'Guardar producto'}
+          <button type="submit" className={button} disabled={busy || fotoInvalida}>
+            {busy ? 'Procesando…' : producto ? 'Guardar cambios' : 'Guardar producto'}
           </button>
         </form>
       )}

@@ -5,7 +5,7 @@ import Home from './pages/Home'
 import Products from './pages/Products'
 import ProductDetail from './pages/ProductDetail'
 import About from './pages/About'
-import AgregarProducto from './pages/AgregarProducto'
+import AgregarProducto, { EditarProducto } from './pages/AgregarProducto'
 import ProductsDescription from './components/ProductsDescription'
 import { useCart } from './context/CartContext'
 import { useUser } from './context/UserContext'
@@ -49,6 +49,7 @@ export default function App() {
           <Route path="cart" element={<Cart />} />
           <Route path="about" element={<About />} />
           <Route path="agregar-producto" element={vistaAdmin ? <AgregarProducto /> : <Navigate to="/products" replace />} />
+          <Route path="products/:id/editar" element={vistaAdmin ? <EditarProducto /> : <Navigate to="/products" replace />} />
           <Route path="*" element={<p className="p-6">Página no encontrada. <Link to="/" className="underline">Volver al inicio</Link></p>} />
         </Routes>
       </main>

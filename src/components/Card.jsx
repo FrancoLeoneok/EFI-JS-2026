@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 const formatoPrecio = new Intl.NumberFormat('es-AR', {
   style: 'currency',
   currency: 'ARS',
@@ -6,7 +8,7 @@ const formatoPrecio = new Intl.NumberFormat('es-AR', {
   maximumFractionDigits: 2,
 })
 
-export default function Card({ producto, categoria, onAgregarAlCarrito }) {
+export default function Card({ producto, categoria, onAgregarAlCarrito, mostrarDetalle = false }) {
   const { nombre, precio, imagen_url, descripcion, destacado, en_stock = true } = producto
 
   return (
@@ -47,7 +49,7 @@ export default function Card({ producto, categoria, onAgregarAlCarrito }) {
             <button
               type="button"
               aria-label={`Agregar ${nombre} al carrito`}
-              className="inline-flex min-h-10 items-center gap-2 rounded-xl bg-[#2e5134] px-3 py-2 text-sm font-semibold text-white hover:bg-[#234028] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2e5134] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#2e5134] px-4 py-2 text-sm font-semibold text-white transition-colors enabled:hover:bg-[#234028] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2e5134] disabled:cursor-not-allowed disabled:opacity-50"
               disabled={!onAgregarAlCarrito || !en_stock}
               onClick={() => onAgregarAlCarrito(producto)}
             >
@@ -55,6 +57,15 @@ export default function Card({ producto, categoria, onAgregarAlCarrito }) {
               Agregar
             </button>
           </div>
+          {mostrarDetalle && (
+            <Link
+              to={'/products/' + producto.id}
+              aria-label={'Ver detalle de ' + nombre}
+              className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#2e5134]/25 bg-[#dfebe0] px-4 text-sm font-semibold text-[#2e5134] transition-colors hover:bg-[#cddfce] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2e5134]"
+            >
+              Ver detalle <span aria-hidden="true">→</span>
+            </Link>
+          )}
         </div>
       </div>
     </article>

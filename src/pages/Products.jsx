@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { api, items } from '../api'
 import { puestosCatalogo, puestosPermitidos } from '../puestos'
 import { useApi } from '../useApi'
@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext'
 import Card from '../components/Card'
 
 const pageSize = 50
+const paginationButton = 'min-h-11 rounded-xl border border-stone-300 bg-white px-4 text-sm font-semibold text-stone-800 transition-colors enabled:hover:border-[#2e5134] enabled:hover:bg-[#dfebe0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2e5134] disabled:cursor-not-allowed disabled:opacity-50'
 
 async function loadCatalog(path, options) {
   const query = new URLSearchParams(path.split('?')[1])
@@ -63,26 +64,17 @@ export default function Products() {
       {loading ? <p role="status">Cargando catálogo…</p> : error ? <p role="alert">{error}</p> : products.length === 0 ? <p>No se encontraron productos.</p> : (
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {products.map((product) => (
-            <li key={product.id} className="flex w-full max-w-xs flex-col gap-3">
-              <div className="flex grow">
-                <Card producto={{ ...product, en_stock: product.en_stock ?? Number(product.stock) > 0 }}
-                  categoria={names.get(product.categoria_id)} onAgregarAlCarrito={agregarAlCarrito} />
-              </div>
-              <Link
-                aria-label={'Ver detalle de ' + product.nombre}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#2e5134]/25 bg-[#dfebe0] px-4 text-sm font-semibold text-[#2e5134] transition hover:bg-[#cddfce] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2e5134]"
-                to={'/products/' + product.id}
-              >
-                Ver detalle <span aria-hidden="true">→</span>
-              </Link>
+            <li key={product.id} className="flex">
+              <Card producto={{ ...product, en_stock: product.en_stock ?? Number(product.stock) > 0 }}
+                categoria={names.get(product.categoria_id)} onAgregarAlCarrito={agregarAlCarrito} mostrarDetalle />
             </li>
           ))}
         </ul>
       )}
-      {pages > 1 && <nav aria-label="Páginas del catálogo" className="mt-6 flex gap-4">
-        <button type="button" disabled={page <= 1} onClick={() => updateFilters({ page: page - 1 })}>Anterior</button>
-        <span>{page} / {pages}</span>
-        <button type="button" disabled={page >= pages} onClick={() => updateFilters({ page: page + 1 })}>Siguiente</button>
+      {pages > 1 && <nav aria-label="Páginas del catálogo" className="mt-6 flex items-center gap-3">
+        <button className={paginationButton} type="button" disabled={page <= 1} onClick={() => updateFilters({ page: page - 1 })}>Anterior</button>
+        <span className="text-sm tabular-nums text-stone-600">{page} / {pages}</span>
+        <button className={paginationButton} type="button" disabled={page >= pages} onClick={() => updateFilters({ page: page + 1 })}>Siguiente</button>
       </nav>}
     </section>
   )

@@ -43,7 +43,7 @@ export default function PerfilFeriante({ feriante, findeConfirmado, onAgregarAlC
             <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {creaciones.map((producto) => (
                 <li key={producto.id} className="flex">
-                  <Card producto={producto} onAgregarAlCarrito={onAgregarAlCarrito} />
+                  <Card producto={producto} onAgregarAlCarrito={onAgregarAlCarrito} mostrarDetalle />
                 </li>
               ))}
             </ul>

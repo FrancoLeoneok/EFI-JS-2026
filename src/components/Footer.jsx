@@ -15,29 +15,6 @@ export default function Footer() {
               Conectando la economía social del Paseo del Andino y Parque Sarmiento con la 
               comunidad los 365 días del año.
             </p>
-            <div className=" flex items-center gap-2,5 pt-2">
-              <a
-                href="https://www.facebook.com/feriaimperiorc/"
-                target="_blank"
-                rel="noopener noreferrer"
-                arial-label="Facebook"
-                className="w-8 h-2 rounded-full bg-white border border-stone-200 shadow-2xs flex items-center justify-center text-stone-700 hover:text-[#C85A32] hover:border-[#C85A32]/40 transition">
-                </a>
-              <a
-                href="https://www.instagram.com/feriaimperiorc/"
-                target="_blank"
-                rel="noopener noreferrer"
-                arial-label="Instagram"
-                className="w-8 h-2 rounded-full bg-white border border-stone-200 shadow-2xs flex items-center justify-center text-stone-700 hover:text-[#C85A32] hover:border-[#C85A32]/40 transition">
-                </a>
-              <a
-                href="https://www.youtube.com/@feriaimperiorc"
-                target="_blank"
-                rel="noopener noreferrer"
-                arial-label="YouTube"
-                className="w-8 h-2 rounded-full bg-white border border-stone-200 shadow-2xs flex items-center justify-center text-stone-700 hover:text-[#C85A32] hover:border-[#C85A32]/40 transition">
-                </a>
-            </div>
           </div>
           <div className="md:col-span-2 space-y-3">
             <h4 className="text-xs font-bold text-stone-900 tracking-wider uppercase">
@@ -58,18 +35,6 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="md:col-span-2 space-y-3">
-          <h4 className="text-xs font-bold text-stone-900 tracking-wider uppercase">
-            Guías
-          </h4>
-          <ul className="space-y-2 text-xs">
-            <li>
-              <Link to="/about" className="text-stone-600 hover:text-[#C85A32] transition">
-                Guía de Feriante
-              </Link>
-            </li>
-          </ul>
-        </div>
       </div>
     </footer>
   );

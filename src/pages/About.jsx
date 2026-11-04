@@ -3,22 +3,22 @@ export default function About() {
     {
       nombre: 'Alejo Alaminos',
       rol: 'Desarrollo Frontend & Componentes',
-      iniciales: 'AA',
+      foto: '/equipo/alejo_alaminos.png',
     },
     {
       nombre: 'Franco Lopez Leone',
       rol: 'Desarrollo Frontend & Arquitectura',
-      iniciales: 'FL',
+      foto: '/equipo/franco_leone.png',
     },
     {
       nombre: 'Joaquin Fornasari',
       rol: 'Desarrollo Frontend & Estado Global',
-      iniciales: 'JF',
+      foto: '/equipo/joaquin_fornasari.png',
     },
     {
       nombre: 'Quiroga Mauricio Nicolas',
       rol: 'Desarrollo Frontend & UI/UX',
-      iniciales: 'QN',
+      foto: '/equipo/nicolas_quiroga.png',
     },
   ]
 
@@ -89,9 +89,6 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <article className="bg-white rounded-2xl p-6 border border-stone-200/80 shadow-xs space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-[#f3e1da] text-[#C85A32] flex items-center justify-center font-bold text-xl">
-                🛍️
-              </div>
               <h3 className="text-lg font-bold text-stone-900">
                 Catálogo Digital Unificado
               </h3>
@@ -102,9 +99,6 @@ export default function About() {
             </article>
 
             <article className="bg-white rounded-2xl p-6 border border-stone-200/80 shadow-xs space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-[#dfebe0] text-[#2e5134] flex items-center justify-center font-bold text-xl">
-                📍
-              </div>
               <h3 className="text-lg font-bold text-stone-900">
                 Puestos & Paseos Feriales
               </h3>
@@ -115,9 +109,6 @@ export default function About() {
             </article>
 
             <article className="bg-white rounded-2xl p-6 border border-stone-200/80 shadow-xs space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xl">
-                🤝
-              </div>
               <h3 className="text-lg font-bold text-stone-900">
                 Economía Social y Comercio Justo
               </h3>
@@ -225,9 +216,14 @@ export default function About() {
                 key={miembro.nombre}
                 className="bg-white rounded-2xl p-6 border border-stone-200/80 shadow-xs flex flex-col items-center text-center space-y-3 hover:shadow-sm transition"
               >
-                <div className="w-16 h-16 rounded-full bg-[#f3e1da] border-2 border-[#C85A32]/30 flex items-center justify-center text-[#C85A32] font-extrabold text-lg shadow-inner">
-                  {miembro.iniciales}
-                </div>
+                <img
+                  src={miembro.foto}
+                  alt=""
+                  width={96}
+                  height={96}
+                  loading="lazy"
+                  className="size-24 rounded-full border-2 border-[#C85A32]/30 object-cover"
+                />
                 <div>
                   <h3 className="font-bold text-stone-900 text-base">{miembro.nombre}</h3>
                   <p className="text-xs text-[#2e5134] font-semibold mt-0.5">{miembro.rol}</p>
@@ -250,7 +246,6 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
             <div className="rounded-2xl bg-[#FAF8F5] p-5 border border-stone-200/60 text-center space-y-2">
-              <span className="text-2xl">📍</span>
               <h3 className="font-bold text-stone-900 text-sm">Paseos Feriales</h3>
               <p className="text-xs text-stone-600">
                 Paseo del Andino & Parque Sarmiento<br />
@@ -259,7 +254,6 @@ export default function About() {
             </div>
 
             <div className="rounded-2xl bg-[#FAF8F5] p-5 border border-stone-200/60 text-center space-y-2">
-              <span className="text-2xl">📱</span>
               <h3 className="font-bold text-stone-900 text-sm">Redes Oficiales</h3>
               <div className="flex justify-center items-center gap-3 text-xs pt-1">
                 <a
@@ -292,7 +286,6 @@ export default function About() {
             </div>
 
             <div className="rounded-2xl bg-[#FAF8F5] p-5 border border-stone-200/60 text-center space-y-2">
-              <span className="text-2xl">🎪</span>
               <h3 className="font-bold text-stone-900 text-sm">¿Sos Feriante?</h3>
               <p className="text-xs text-stone-600">
                 Sumá tu puesto al catálogo digital y mostrá tus creaciones a toda la ciudad.

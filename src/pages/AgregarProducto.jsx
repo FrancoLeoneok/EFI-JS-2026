@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom'
 import { api } from '../api'
 import { useApi } from '../useApi'
 import { useCart } from '../context/CartContext'
+import { puestosPermitidos } from '../puestos'
 
-const initialForm = { nombre: '', descripcion: '', precio: '', categoria_id: '', emprendedor_id: '', en_stock: true }
+const initialForm = { nombre: '', descripcion: '', imagen_url: '', precio: '', categoria_id: '', emprendedor_id: '', en_stock: true }
 
 const field = 'block w-full rounded-lg border border-stone-300 bg-white p-3'
 const button = 'rounded-lg bg-[#2e5134] px-4 py-2 font-semibold text-white disabled:opacity-50'
@@ -18,10 +19,13 @@ export default function AgregarProducto() {
   const [created, setCreated] = useState([])
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState(null)
+  const [failedPhoto, setFailedPhoto] = useState('')
+  const imagen_url = values.imagen_url.trim()
+  const validPhotoUrl = !imagen_url || (imagen_url.length <= 255 && /^https:\/\//i.test(imagen_url) && URL.canParse(imagen_url))
 
   async function handleSubmit(event) {
     event.preventDefault()
-    if (busy) return
+    if (busy || !validPhotoUrl || (imagen_url && failedPhoto === imagen_url)) return
     const nombre = values.nombre.trim()
     const precio = Number(values.precio)
     const categoria_id = Number(values.categoria_id)
@@ -37,11 +41,12 @@ export default function AgregarProducto() {
       const product = await api('/productos/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, precio, categoria_id, emprendedor_id, descripcion: values.descripcion.trim() || null, en_stock: values.en_stock }),
+        body: JSON.stringify({ nombre, precio, categoria_id, emprendedor_id, descripcion: values.descripcion.trim() || null, en_stock: values.en_stock, imagen_url: imagen_url || null }),
       })
       setCreated((current) => [...current, product])
       setNotice({ message: 'Producto publicado.' })
       setValues(initialForm)
+      setFailedPhoto('')
     } catch (error) {
       setNotice({ error: error.message })
     } finally {
@@ -88,11 +93,28 @@ export default function AgregarProducto() {
           <label className="block">Puesto
             <select className={field} {...bind('emprendedor_id')} required>
               <option value="" disabled>Elegí un puesto</option>
-              {sellers.data?.items?.filter((item) => item.activo).map(({ id, nombre_fantasia }) => <option key={id} value={id}>{nombre_fantasia}</option>)}
+              {sellers.data?.items
+                ?.filter(({ activo, id }) => activo && puestosPermitidos.includes(id))
+                .map(({ id, nombre_fantasia }) => <option key={id} value={id}>{nombre_fantasia}</option>)}
             </select>
           </label>
           <label className="block"><input type="checkbox" name="en_stock" checked={values.en_stock} onChange={(event) => setValues({ ...values, en_stock: event.target.checked })} /> Disponible</label>
-          <button type="submit" className={button} disabled={busy}>Guardar producto</button>
+          <div className="space-y-2">
+            <label htmlFor="foto-producto" className="block">URL de la foto (opcional)</label>
+            <input id="foto-producto" type="url" {...bind('imagen_url')} onChange={(event) => { setFailedPhoto(''); bind('imagen_url').onChange(event) }} maxLength={255}
+              placeholder="https://i.ibb.co/…" aria-describedby="foto-ayuda" className={field} />
+            <p id="foto-ayuda" className="text-sm text-stone-600">Pegá el enlace directo a la imagen de ImgBB.</p>
+            {!validPhotoUrl && <p role="alert" className="text-sm text-red-800">Ingresá una URL válida que empiece con https://.</p>}
+            {imagen_url && validPhotoUrl && (failedPhoto === imagen_url ? (
+              <p role="alert" className="text-sm text-red-800">No se pudo mostrar la foto. Revisá el enlace directo.</p>
+            ) : (
+              <img key={imagen_url} src={imagen_url} alt="Vista previa de la foto del producto"
+                onError={() => setFailedPhoto(imagen_url)} className="aspect-square w-40 rounded-lg bg-stone-100 object-contain" />
+            ))}
+          </div>
+          <button type="submit" className={button} disabled={busy || !validPhotoUrl || Boolean(imagen_url && failedPhoto === imagen_url)}>
+            {busy ? 'Procesando…' : 'Guardar producto'}
+          </button>
         </form>
       )}
       {notice && <p role={notice.error ? 'alert' : 'status'}>{notice.error || notice.message}</p>}

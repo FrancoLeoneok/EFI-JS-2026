@@ -13,11 +13,15 @@ Abrí la URL que imprime Vite. El proyecto usa la API del EFI por defecto. Para 
 
 `npm run lint` revisa el código y `npm run build` genera la versión de producción.
 
+## Fotos de productos
+
+Subí la foto a ImgBB y pegá el enlace directo a la imagen en el campo opcional del formulario.
+
 ## Navegación
 
 - `/`: inicio con puestos destacados.
 - `/products`: catálogo con búsqueda, categorías y paginación.
-- `/products/:id`: detalle. La subruta `opiniones` comparte los datos del producto; actualmente la API no devuelve opiniones.
+- `/products/:id`: detalle del producto. Abre la subruta `/products/:id/descripcion` por defecto.
 - `/feriantes/:id`: perfil del puesto y sus productos.
 - `/cart`: carrito compartido con Context API durante la navegación.
 - `/agregar-producto`: publica mediante POST y permite eliminar mediante DELETE los productos recién creados en esa pantalla. Usá datos de prueba y eliminalos antes de salir.

@@ -1,12 +1,9 @@
 import {useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useUser } from '../context/UserContext';
 
 export default function Navbar({cartCount = 0}){
   const navigate = useNavigate();
-  const { usuario, esVisitante } = useUser();
   const[searchTerm, setSearchTerm] = useState("");
-  const[userMenuOpen, setUserMenuOpen] = useState(false);
   
     const handleSearch = (e) => {
     e.preventDefault();
@@ -15,7 +12,7 @@ export default function Navbar({cartCount = 0}){
   return(
     <header className="sticky top-0 z-50 bg-[#FBF9F5] border-b border-stone-200/80 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2 md:h-20 md:flex-nowrap md:py-0">
 
           <Link to="/" className="flex items-center gap-3 shrink-0 group">
             <div className="w-12 h-12 rounded-full border border-stone-200/80 bg-white shadow-xs flex items-center justify-center overflow-hidden p-1 transition group-hover:scale-105">
@@ -53,62 +50,28 @@ export default function Navbar({cartCount = 0}){
               </button>              
           </form>
 
-          <div className="flex items-center gap-3">
-            <Link to="/products" className="text-sm font-semibold">Catálogo</Link>
+          <nav aria-label="Navegación principal" className="flex w-full items-center gap-3 sm:w-auto sm:gap-4">
+            <Link to="/products" className="whitespace-nowrap text-sm font-semibold hover:text-[#C85A32]">Catálogo</Link>
+            <Link to="/agregar-producto" className="whitespace-nowrap text-sm font-semibold hover:text-[#C85A32]">Agregar producto</Link>
+            <Link to="/about" className="whitespace-nowrap text-sm font-semibold hover:text-[#C85A32]">Acerca de</Link>
             <Link
               to="/cart"
-              className="relative p-2 text-stone-600 hover:text-stone-900 rounded-full hover:bg-stone-100 transition"
-              aria-label="Ver carrito">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              className="relative ml-auto grid size-11 shrink-0 place-items-center rounded-full text-stone-600 transition hover:bg-stone-100 hover:text-stone-900"
+              aria-label={cartCount > 0 ? 'Ver carrito (' + cartCount + ')' : 'Ver carrito'}
+            >
+              <svg aria-hidden="true" className="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 3h3l2.5 12h11l2-8H6" />
+                <circle cx="9" cy="20" r="1" />
+                <circle cx="18" cy="20" r="1" />
               </svg>
               {cartCount > 0 && (
-                  <span className="absolute top-1 right-1 bg-[#C85A32] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
+                <span aria-hidden="true" className="absolute right-0 top-0 grid min-w-4 place-items-center rounded-full bg-[#C85A32] px-1 text-[10px] font-bold text-white">
+                  {cartCount}
+                </span>
+              )}
             </Link>
-                <div className="relative">
-                <button
-                  type="button" aria-label="Menú de la feria" aria-expanded={userMenuOpen} onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full border border-stone-200 bg-white hover:bg-stone-50 transition shadow-2xs"
-                >
-                  <div className="hidden sm:flex flex-col text-left">
-                    <span className="text-xs font-bold text-stone-800 leading-tight">
-                      {usuario?.nombre_completo || 'Menú'}
-                    </span>
-                    <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                      {esVisitante ? 'Visitante' : 'Mi cuenta'}
-                    </span>
-                  </div>
-                  <svg className="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {userMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-stone-100 py-1 z-50 text-xs">
-                    <Link 
-                      to="/agregar-producto" 
-                      onClick={() => setUserMenuOpen(false)}
-                      className="block px-4 py-2 text-stone-700 hover:bg-stone-50 font-medium"
-                    >
-                      + Agregar Producto
-                    </Link>
-                    <Link 
-                      to="/about" 
-                      onClick={() => setUserMenuOpen(false)}
-                      className="block px-4 py-2 text-stone-700 hover:bg-stone-50"
-                    >
-                      Acerca de la feria
-                    </Link>
-                  </div>
-                )}
-              </div>
-          </div>    
-
-        </div>  
+          </nav>
+        </div>
       </div>
     </header>
   );

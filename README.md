@@ -1,41 +1,77 @@
-# Feria Imperio
+# EFI Javascript
 
-Catálogo de la feria de Río Cuarto. Permite conocer los puestos, buscar productos, ver su detalle, armar un carrito y publicar o eliminar productos de prueba. Usa React, Vite, Tailwind y la [API de Python del EFI](https://efi-pp1-python-771ef59e.fastapicloud.dev/api/v1/docs).
+Aplicación web del Examen Final Integrador de JavaScript. Presenta productos y puestos de Río Cuarto, Córdoba, y consume la [API de Python del EFI](https://efi-pp1-python-771ef59e.fastapicloud.dev/api/v1/docs).
 
-## Ejecutar en local
+## Sobre el proyecto
 
-```sh
-npm ci
-npm run dev
-```
+Feria Imperio permite conocer a los emprendedores locales, explorar sus productos y armar un carrito. El catálogo reúne los productos de **Mates El Imperio** y **Cerámicas del Sur**. La vista admin permite demostrar el alta y la baja de productos contra la API.
 
-Abrí la URL que imprime Vite. El proyecto usa la API del EFI por defecto. Para cambiarla, copiá `.env.example` a `.env.local`, ajustá `VITE_API_URL` (incluí el prefijo `/api/v1`) y reiniciá Vite.
+## Funcionalidades actuales
 
-`npm run lint` revisa el código y `npm run build` genera la versión de producción.
+- **Inicio y puestos:** feriantes destacados y perfiles con información del emprendimiento y búsqueda en sus productos.
+- **Catálogo:** búsqueda por texto, filtro por puesto, paginación y fichas con precio, disponibilidad y descripción.
+- **Carrito:** productos y cantidades compartidos entre pantallas mediante Context API durante la navegación.
+- **Vista admin:** formulario con validación para publicar productos. La foto es opcional y se agrega con un enlace directo de ImgBB. Los productos recién publicados se pueden eliminar desde la misma pantalla.
 
-## Fotos de productos
+El selector de vistas sirve para la demostración académica. La vista usuario oculta el formulario y redirige al catálogo si se intenta abrir su URL. La autorización de operaciones sobre los datos corresponde a la API.
 
-Subí la foto a ImgBB y pegá el enlace directo a la imagen en el campo opcional del formulario.
+## Tecnologías
 
-## Navegación
+- **React 19 y JavaScript:** componentes, formularios y estado.
+- **React Router DOM 7:** rutas principales, dinámicas y anidadas.
+- **Vite 8 y Tailwind CSS 4:** entorno de desarrollo, compilación y estilos.
+- **Fetch y FastAPI:** lectura, alta y baja de productos mediante la API de Python.
+- **Context API:** carrito y modo de visualización compartidos.
 
-- `/`: inicio con puestos destacados.
-- `/products`: catálogo con búsqueda, categorías y paginación.
-- `/products/:id`: detalle del producto. Abre la subruta `/products/:id/descripcion` por defecto.
-- `/feriantes/:id`: perfil del puesto y sus productos.
-- `/cart`: carrito compartido con Context API durante la navegación.
-- `/agregar-producto`: publica mediante POST y permite eliminar mediante DELETE los productos recién creados en esa pantalla. Usá datos de prueba y eliminalos antes de salir.
-- `/about`: información del equipo.
+## Arquitectura y rutas
 
-La API del EFI no documenta autenticación para la edición de productos. Esta pantalla sirve para la demostración académica; para usarla como administración pública hace falta que el backend controle los permisos.
+`src/pages/` contiene las pantallas, `src/components/` los elementos reutilizables y `src/context/` el estado compartido. `src/api.js` centraliza las peticiones y `src/useApi.js` gestiona los datos, la carga y los errores con `useState` y `useEffect`.
 
-## Vercel
+- `/`: inicio y puestos destacados.
+- `/products`: catálogo con búsqueda y filtro por puesto.
+- `/products/:id`: detalle dinámico. Abre por defecto `/products/:id/descripcion`, su ruta anidada.
+- `/feriantes/:id`: perfil y productos del puesto.
+- `/cart`: carrito.
+- `/agregar-producto`: formulario disponible en vista admin.
+- `/about`: información del proyecto y del equipo.
 
-Importá el repositorio como proyecto Vite, configurá `VITE_API_URL` con el valor de `.env.example` y desplegá. `vercel.json` permite abrir rutas internas directamente y recargarlas. Verificá que la API admita el dominio del despliegue si configurás CORS en el backend.
+## 🤝 Colaboradores
 
-## Integrantes
+Participantes del Trabajo
 
-- Alejo Alaminos
-- Franco Lopez Leone
-- Joaquin Fornasari
-- Quiroga Mauricio Nicolas
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/FornaJoa" title="Perfil de Joaquin Fornasari en GitHub">
+        <img src="https://avatars.githubusercontent.com/u/163206353?v=4" width="100" alt="Foto de Joaquin Fornasari en GitHub"/><br>
+        <sub>
+          <b>Joaquin Fornasari</b>
+        </sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/FrancoLeoneok" title="Perfil de Franco Leone en GitHub">
+        <img src="https://avatars.githubusercontent.com/u/178578464?v=4" width="100" alt="Foto de Franco Leone en GitHub"/><br>
+        <sub>
+          <b>Franco Leone</b>
+        </sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/AlejoAlaminos" title="Perfil de Alejo Alaminos en GitHub">
+        <img src="https://avatars.githubusercontent.com/u/164796037?v=4" width="100" alt="Foto de Alejo Alaminos en GitHub"/><br>
+        <sub>
+          <b>Alejo Alaminos</b>
+        </sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/nicoquiroga20-lang" title="Perfil de Nicolas Quiroga en GitHub">
+        <img src="https://avatars.githubusercontent.com/u/232619836?v=4" width="100" alt="Foto de Nicolas Quiroga en GitHub"/><br>
+        <sub>
+          <b>Nicolas Quiroga</b>
+        </sub>
+      </a>
+    </td>
+  </tr>
+</table>

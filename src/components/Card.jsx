@@ -12,10 +12,11 @@ export default function Card({ producto, categoria, onAgregarAlCarrito }) {
   return (
     <article className="flex w-full max-w-xs flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
       <div className="relative aspect-square bg-stone-100">
-        {imagen_url ? (
-          <img src={imagen_url} alt={nombre} onError={(event) => { event.currentTarget.hidden = true }} className="h-full w-full object-cover" />
-        ) : (
-          <p className="grid h-full place-items-center text-sm text-stone-600">Sin imagen</p>
+        <p className="absolute inset-0 grid place-items-center text-sm text-stone-600">Sin imagen</p>
+        {imagen_url && (
+          <img key={imagen_url} src={imagen_url} alt={nombre}
+            onError={(event) => { event.currentTarget.hidden = true }}
+            className="absolute inset-0 h-full w-full bg-stone-100 object-contain" />
         )}
         <div className="absolute inset-x-3 top-3 flex flex-wrap justify-between gap-2">
           <span className="rounded-full bg-stone-900/85 px-2.5 py-1 text-xs font-bold uppercase text-white">

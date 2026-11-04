@@ -13,6 +13,10 @@ Abrí la URL que imprime Vite. El proyecto usa la API del EFI por defecto. Para 
 
 `npm run lint` revisa el código y `npm run build` genera la versión de producción.
 
+## Fotos de productos
+
+Subí la foto a ImgBB y pegá el enlace directo a la imagen en el campo opcional del formulario.
+
 ## Navegación
 
 - `/`: inicio con puestos destacados.
